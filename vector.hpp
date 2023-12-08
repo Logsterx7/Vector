@@ -20,6 +20,11 @@ namespace usu
 
         pointer m_data;
         size_type m_capacity;
+        resize_type func = [](size_type currentCapacity) -> size_type
+        {
+            return currentCapacity * 2;
+        };
+        
         int m_size;
 
         // Iterator
@@ -68,6 +73,24 @@ namespace usu
                 return i;
             } // incrementable e.g., r++
 
+            iterator operator--()
+            {
+                m_pos--;
+                return *this;
+            } // incrementable e.g., --r
+            iterator operator--(int)
+            {
+                iterator i = *this;
+                m_pos--;
+                return i;
+            } // incrementable e.g., r--
+
+            T* operator->()
+            {
+
+                return &m_data[m_pos];
+            }
+
             iterator& operator=(const iterator& rhs)
             {
                 this->m_pos = rhs.m_pos;
@@ -104,27 +127,45 @@ namespace usu
 
         vector(size_type size)
         {
+            
             if (size < 10)
             {
                 m_capacity = 10;
-                m_size = 0;
+                m_size = size;
                 m_data.reset(new T[10]);
             }
             else
             {
                 m_capacity = size * 2;
-                m_size = 0;
+                m_size = size;
                 m_data.reset(new T[m_capacity]);
             };
         }
 
         vector(resize_type resize)
         {
-            std::cout << "RESIZE CALLED";
+       
+            func = resize;
+            m_size = 0;
+            m_capacity = 10;   
+            m_data.reset(new T[10]);
         }
         vector(size_type size, resize_type resize)
         {
-            std::cout << "RESIZE CALLED 1";
+            
+            m_size = size;
+            
+            func = resize;
+            if(m_size <= 10){
+                m_capacity = 10;
+                
+            }
+            else
+            {
+                m_capacity = resize(m_size);
+            }
+                
+            m_data.reset(new T[m_capacity]);
         }
         vector(std::initializer_list<T> list)
         {
@@ -139,42 +180,51 @@ namespace usu
         }
         vector(std::initializer_list<T> list, resize_type resize)
         {
-            std::cout << "RESIZE CALLED 3";
+            m_capacity = 10;
+            m_size = 0;
+            func = resize;
+            m_data.reset(new T[m_capacity]);
+            for (T item : list)
+            {
+                add(item);
+            }
         }
 
         // Methods & Operators
         reference operator[](size_type index)
         {
+            if (index >= m_size) {
+                throw std::range_error("");
+        }
             return m_data[index];
         }
 
         void add(T value)
         {
-
-            m_data[m_size] = value;
-            m_size += 1;
-            if (m_size >= m_capacity)
+            if (m_size < m_capacity)
             {
-                m_capacity *= 2;
+                m_data[m_size] = value;
+                m_size += 1;
+            }
+            else
+            {
+                m_capacity = func(m_capacity);
+
                 pointer newData;
-                newData.reset(new T[m_capacity * 2]);
+                newData.reset(new T[m_capacity]);
                 for (int i = 0; i < m_size; i++)
                 {
                     newData[i] = m_data[i];
                 }
                 m_data = newData;
+                m_data[m_size] = value;
+                m_size += 1;
             }
-        }
-        void print()
-        {
+            
 
-            for (int i = 0; i < m_size; i++)
-            {
-                std::cout << m_data[i] << std::endl;
-            }
         }
 
-        void insert(size_type index, T value)
+        void insert(size_type index, T value) 
         {
             if (index <= m_size)
             {
@@ -182,7 +232,7 @@ namespace usu
                 pointer newData;
                 if (m_size >= m_capacity)
                 {
-                    m_capacity *= 2;
+                    m_capacity = func(m_capacity);
                     newData.reset(new T[m_capacity * 2]);
                 }
                 else
@@ -208,11 +258,11 @@ namespace usu
             }
             else
             {
-                std::range_error;
+                throw std::range_error("");
             }
         }
 
-        void remove(size_type index) noexcept
+        void remove(size_type index)
         {
             if (index < m_size)
             {
@@ -236,7 +286,7 @@ namespace usu
             }
             else
             {
-                std::range_error;
+                throw std::range_error("");
             }
         }
 
