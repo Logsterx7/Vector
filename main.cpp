@@ -76,21 +76,5 @@ int main()
     std::cout << "\n-- updated capacity --\n";
     report(v3);
 
-    // resize with custom lambda
-    usu::vector<int> v4({ 1, 2, 3, 5, 7, 11, 13, 17, 19 }, [](auto size)
-                        {
-                            return static_cast<usu::vector<int>::size_type>(size * 1.5);
-                        });
-    std::cout << "\n-- initial capacity --\n";
-    report(v4);
-    v4.add(23);
-    std::cout << "\n-- maxed capacity --\n";
-    report(v4);
-    v4.add(29);
-    std::cout << "\n-- updated capacity --\n";
-    report(v4);
-
-    std::cout << "\n -- iteration --\n";
-
     return 0;
 }

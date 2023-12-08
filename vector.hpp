@@ -128,7 +128,7 @@ namespace usu
         }
         vector(std::initializer_list<T> list)
         {
-            m_capacity = list.size() * 2;
+            m_capacity = 10;
             m_size = 0;
 
             m_data.reset(new T[m_capacity]);
@@ -176,20 +176,20 @@ namespace usu
 
         void insert(size_type index, T value)
         {
-            if (index < m_size)
+            if (index <= m_size)
             {
                 m_size += 1;
                 pointer newData;
-                if (index + 1 > m_capacity)
+                if (m_size >= m_capacity)
                 {
-
+                    m_capacity *= 2;
                     newData.reset(new T[m_capacity * 2]);
                 }
                 else
                 {
                     newData.reset(new T[m_capacity]);
                 }
-                for (int i = 0; i <= m_size; i++)
+                for (int i = 0; i < m_size; i++)
                 {
                     if (i < index)
                     {
