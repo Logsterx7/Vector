@@ -24,7 +24,7 @@ namespace usu
         {
             return currentCapacity * 2;
         };
-        
+
         int m_size;
 
         // Iterator
@@ -127,7 +127,7 @@ namespace usu
 
         vector(size_type size)
         {
-            
+
             if (size < 10)
             {
                 m_capacity = 10;
@@ -144,27 +144,27 @@ namespace usu
 
         vector(resize_type resize)
         {
-       
+
             func = resize;
             m_size = 0;
-            m_capacity = 10;   
+            m_capacity = 10;
             m_data.reset(new T[10]);
         }
         vector(size_type size, resize_type resize)
         {
-            
+
             m_size = size;
-            
+
             func = resize;
-            if(m_size <= 10){
+            if (m_size <= 10)
+            {
                 m_capacity = 10;
-                
             }
             else
             {
                 m_capacity = resize(m_size);
             }
-                
+
             m_data.reset(new T[m_capacity]);
         }
         vector(std::initializer_list<T> list)
@@ -193,9 +193,10 @@ namespace usu
         // Methods & Operators
         reference operator[](size_type index)
         {
-            if (index >= m_size) {
+            if (index >= m_size)
+            {
                 throw std::range_error("");
-        }
+            }
             return m_data[index];
         }
 
@@ -220,17 +221,15 @@ namespace usu
                 m_data[m_size] = value;
                 m_size += 1;
             }
-            
-
         }
 
-        void insert(size_type index, T value) 
+        void insert(size_type index, T value)
         {
             if (index <= m_size)
             {
                 m_size += 1;
                 pointer newData;
-                if (m_size >= m_capacity)
+                if (m_size > m_capacity)
                 {
                     m_capacity = func(m_capacity);
                     newData.reset(new T[m_capacity * 2]);
